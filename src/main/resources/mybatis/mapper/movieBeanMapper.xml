@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangyuelin.app.crawler.douban.mapper.MovieMapper">
+    <resultMap id="MovieResult" type="com.wangyuelin.app.crawler.base.MovieBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="cn_name" property="name" jdbcType="VARCHAR"/>
+        <result column="en_name" property="enName" jdbcType="VARCHAR"/>
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+        <result column="director" property="director" jdbcType="VARCHAR"/>
+        <result column="scriptwriter" property="scriptwriter" jdbcType="VARCHAR"/>
+        <result column="actors" property="actors" jdbcType="VARCHAR"/>
+        <result column="types" property="types" jdbcType="VARCHAR"/>
+        <result column="location" property="location" jdbcType="VARCHAR"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="show_time" property="showTime" jdbcType="VARCHAR"/>
+        <result column="show_year" property="showYear" jdbcType="VARCHAR"/>
+        <result column="movie_time" property="movieTime" jdbcType="VARCHAR"/>
+        <result column="intro" property="intro" jdbcType="VARCHAR"/>
+        <result column="detail_web_url" property="detaiWeblUrl" jdbcType="VARCHAR"/>
+        <result column="douban_rank" property="doubanRank" jdbcType="FLOAT"/>
+        <result column="download_web_url" property="downloadWebUrl" jdbcType="VARCHAR"/>
+        <result column="movie_tag" property="tag" jdbcType="VARCHAR"/>
+        <result column="posters" property="posters" jdbcType="VARCHAR"/>
+
+
+    </resultMap>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.wangyuelin.app.crawler.base.MovieBean">
+        insert into movie(id, cn_name, en_name, nick_name, director, scriptwriter,
+         actors, types, location, language, show_time, show_year, movie_time, intro, detail_web_url
+         ,douban_rank, download_web_url, movie_tag, posters)
+         values (#{id}, #{name}, #{enName}, #{nickName}, #{director}, #{scriptwriter}
+         ,#{actors}, #{types}, #{location}, #{language}, #{showTime}, #{showYear}, #{movieTime}
+         ,#{intro}, #{detaiWeblUrl}, #{doubanRank}, #{downloadWebUrl}, #{tag}, #{posters})
+    </insert>
+
+    <select id="getByDetailUrl" parameterType="String" resultMap="MovieResult">
+        select * from movie where detail_web_url=#{detailUrl}
+    </select>
+
+    <select id="getByDownloadWeblUrl" parameterType="String" resultMap="MovieResult">
+        select * from movie where download_web_url=#{downloadWebUrl}
+    </select>
+    <select id="getByName" parameterType="String" resultMap="MovieResult">
+        select * from movie where cn_name=#{movieName}
+    </select>
+
+    <update id="update" parameterType="com.wangyuelin.app.crawler.base.MovieBean">
+        UPDATE
+         movie
+         SET
+         cn_name = #{name}, en_name = #{enName}, nick_name = #{nickName}, director = #{director}, scriptwriter = #{scriptwriter}, actors = #{actors}
+         ,types = #{types}, location = #{location}, language = #{language}, show_time = #{showTime}, show_year = #{showYear}
+         ,movie_time = #{movieTime}, intro = #{intro}, detail_web_url = #{detaiWeblUrl}, douban_rank = #{doubanRank}, download_web_url = #{downloadWebUrl}
+         ,movie_tag = #{tag}, posters = #{posters}
+         WHERE
+         id = #{id}
+    </update>
+
+    <select id="getEmptyMovies" resultMap="MovieResult">
+        SELECT * FROM movie WHERE location IS NULL;
+    </select>
+
+    <!--<sql id="Base_Column_List" >-->
+    <!--id, name, age, address-->
+    <!--</sql>-->
+
+    <!--<select id="getAll" resultMap="BaseResultMap"  >-->
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--FROM user-->
+    <!--</select>-->
+
+    <!--<select id="getOne" parameterType="java.lang.Integer" resultMap="BaseResultMap" >-->
+    <!--SELECT-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--FROM user-->
+    <!--WHERE id = #{id}-->
+    <!--</select>-->
+
+    <!--<insert id="insert" parameterType="com.kerry.model.User" >-->
+    <!--INSERT INTO-->
+    <!--user-->
+    <!--(id,name,age,address)-->
+    <!--VALUES-->
+    <!--(#{id},#{name}, #{age}, #{address})-->
+    <!--</insert>-->
+
+    <!--<update id="update" parameterType="com.kerry.model.User" >-->
+    <!--UPDATE-->
+    <!--user-->
+    <!--SET-->
+    <!--<if test="name != null">name = #{name},</if>-->
+    <!--<if test="age != null">age = #{age},</if>-->
+    <!--address = #{address}-->
+    <!--WHERE-->
+    <!--id = #{id}-->
+    <!--</update>-->
+
+    <!--<delete id="delete" parameterType="java.lang.Integer" >-->
+    <!--DELETE FROM-->
+    <!--user-->
+    <!--WHERE-->
+    <!--id =#{id}-->
+    <!--</delete>-->
+
+</mapper>

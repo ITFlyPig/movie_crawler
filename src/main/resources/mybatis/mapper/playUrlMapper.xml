@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wangyuelin.app.crawler.douban.mapper.PlayUrlMapper">
+    <resultMap id="PlayUrlResult" type="com.wangyuelin.app.crawler.base.PlayUrl">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="movie_id" property="movieId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.wangyuelin.app.crawler.base.PlayUrl">
+        INSERT INTO
+        play_url
+        (id, name, url, type, movie_id)
+        VALUES
+        (#{id}, #{name}, #{url}, #{type}, #{movieId})
+    </insert>
+
+    <select id="getByUrlAndMovieId"  resultMap="PlayUrlResult">
+        SELECT * FROM
+        play_url
+        WHERE
+        url = #{0}
+        AND
+        movie_id = #{1}
+    </select>
+
+    <update id="updateById"  parameterType="com.wangyuelin.app.crawler.base.PlayUrl">
+        UPDATE
+        play_url
+        SET
+        name = #{name}, url = #{url}, type = #{type}, movie_id = #{movieId}
+        WHERE
+        id = #{id}
+    </update>
+
+
+
+
+</mapper>
