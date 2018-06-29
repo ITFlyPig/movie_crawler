@@ -25,6 +25,17 @@
 
     </resultMap>
 
+    <resultMap id="TagMovieResult" type="com.wangyuelin.app.crawler.base.MovieBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="movie_name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="types" jdbcType="VARCHAR"/>
+        <result column="location" property="location" jdbcType="VARCHAR"/>
+        <result column="year" property="showTime" jdbcType="VARCHAR"/>
+        <result column="tag" property="tag" jdbcType="VARCHAR"/>
+
+
+    </resultMap>
+
     <insert id="insert" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.wangyuelin.app.crawler.base.MovieBean">
         insert into movie(id, cn_name, en_name, nick_name, director, scriptwriter,
@@ -61,6 +72,28 @@
     <select id="getEmptyMovies" resultMap="MovieResult">
         SELECT * FROM movie WHERE location IS NULL;
     </select>
+
+    <delete id="deleteByTag" >
+      DELETE FROM ${table} WHERE tag = #{tag}
+    </delete>
+
+    <select id="getMovieByTagAndName" resultType="java.lang.Integer"  resultMap="TagMovieResult">
+        SELECT * FROM ${table} WHERE tag LIKE #{tag} AND movie_name=#{name}
+    </select>
+
+    <insert id="insertTagMovie" >
+        INSERT INTO ${table}(movie_name, tag, movie_index, year, location, type)VALUES(#{movie.name}, #{movie.tag}, #{index}, #{movie.showYear}, #{movie.location},#{movie.types})
+    </insert>
+
+    <select id="getNumByTag" resultType="java.lang.Integer">
+        SELECT MAX(movie_index) FROM ${table} WHERE tag = #{tag}
+    </select>
+
+    <update id="updateTagMovie" >
+        UPDATE ${table} SET year=#{movie.showYear},location=#{movie.location},type=#{movie.types} WHERE id=#{movie.id}
+    </update>
+
+
 
     <!--<sql id="Base_Column_List" >-->
     <!--id, name, age, address-->

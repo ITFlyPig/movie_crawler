@@ -3,6 +3,7 @@ package com.wangyuelin.app.crawler.baidu;
 
 import com.wangyuelin.app.crawler.baidu.task.BDMovieTask;
 import com.wangyuelin.app.crawler.movie.MovieConstantInfo;
+import com.wangyuelin.app.crawler.movie.MovieTag;
 import com.wangyuelin.app.crawler.movie.MovieType;
 import com.wangyuelin.app.util.MyThreadPool;
 import org.apache.http.util.TextUtils;
@@ -26,7 +27,6 @@ public class BDMoviePage {
     public void parse(Page page) {
 
 
-
     }
 
     /**
@@ -35,41 +35,54 @@ public class BDMoviePage {
     public void startCrawBaiduMovie() {
 
         //获取所有的电音分类
-        MovieType[] movieTypes = MovieType.values();
-        ArrayList<String> types = new ArrayList<>();
-        for (MovieType movieType : movieTypes) {
-            types.add(movieType.getTypeStr());
+        final MovieType[] movieTypes = MovieType.values();
+        Runnable crawBaiduMovieTask = new Runnable() {
+            @Override
+            public void run() {
+                //测试
+//                MovieType[] movieTypes = new MovieType[]{ MovieType.ACTION};
 
-        }
-        types.add("");//对于百度电影分类来说""表示全部
-
-        //测试
-        types.clear();
-        types.add("");
-
-
-
-        for (String movieType : types) {
-            for (String location : MovieConstantInfo.LOCATION) {
-                for (String year : MovieConstantInfo.BD_YEAR) {
-                    for (int sort : MovieConstantInfo.BD_SORT) {
-
-                        String url = MovieConstantInfo.getBDUrl(sort, movieType, location, year, "");
-                        if (TextUtils.isEmpty(url)) {
-                            continue;
-                        }
-                        BDMovieTask task =  new BDMovieTask( url, 0);
-                        task.setSeacherKey(sort + movieType + location + year);
-                        MyThreadPool.submit(task);
-                    }
+                ArrayList<String> types = new ArrayList<>();
+                types.add("");//对于百度电影分类来说""表示全部
+                for (MovieType movieType : movieTypes) {
+                    types.add(movieType.getTypeStr());
 
                 }
-            }
-        }
 
-//        String url = MovieConstantInfo.getBDUrl(16, "", "", "", "");
-//        BDMovieTask task =  new BDMovieTask( url, 0);
-//        MyThreadPool.submit(task);
+
+                for (int sort : MovieConstantInfo.BD_SORT) {
+                    for (String movieType : types) {
+                        for (String location : MovieConstantInfo.LOCATION) {
+                            for (String year : MovieConstantInfo.BD_YEAR) {
+
+
+                                String url = MovieConstantInfo.getBDUrl(sort, movieType, location, year, "");
+                                if (TextUtils.isEmpty(url)) {
+                                    continue;
+                                }
+                                BDMovieTask task = new BDMovieTask(url, 0);
+                                task.setSeacherKey(sort + movieType + location + year);
+                                //设置电影的tag
+                                task.setLocation(location);
+                                task.setYear(year);
+                                task.setType(movieType);
+                                MovieTag tag = MovieConstantInfo.getBaiduMovieTag(sort);
+                                if (tag != null) {
+                                    task.setMovieTag(tag.getTagStr());
+                                }
+
+//                        MyThreadPool.submit(task);
+                                task.run();
+                            }
+
+                        }
+                    }
+                }
+
+            }
+        };
+        MyThreadPool.submit(crawBaiduMovieTask);
+
 
     }
 

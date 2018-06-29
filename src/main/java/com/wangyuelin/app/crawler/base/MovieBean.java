@@ -2,6 +2,7 @@ package com.wangyuelin.app.crawler.base;
 
 import org.apache.http.util.TextUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  * @outhor wangyuelin
  * @create 2018-06-11 下午2:41
  */
-public class MovieBean {
+public class MovieBean implements Serializable {
     private int id;
     private String name;//中文名
     private String enName;//英文名和其他的的名

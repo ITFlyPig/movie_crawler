@@ -39,8 +39,15 @@ public void testParse() throws Exception {
 @Test
 public void testStartCrawBaiduMovie() throws Exception { 
 //TODO: Test goes here...
-    BDMoviePage bdMoviePage = new BDMoviePage();
-    bdMoviePage.startCrawBaiduMovie();
+//    BDMoviePage bdMoviePage = new BDMoviePage();
+//    bdMoviePage.startCrawBaiduMovie();
+
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 10; j> 0; j--) {
+            System.out.println("i=" + i + " j=" + j);
+        }
+    }
 } 
 
 

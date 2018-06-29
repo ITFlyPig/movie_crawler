@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  */
 public class MyThreadPool {
 
-    private static ExecutorService cachedThreadPool = Executors.newFixedThreadPool(5);
+    private static ExecutorService cachedThreadPool = Executors.newFixedThreadPool(1);
 
 
     /**

@@ -81,6 +81,7 @@ public class DoubanMovieService implements IDoubanMovie {
 
     /**
      * 将播放链接保存
+     *
      * @param playUrl
      */
     @Override
@@ -116,6 +117,7 @@ public class DoubanMovieService implements IDoubanMovie {
 
     /**
      * 判断一个电影是否应该爬取，数据库存在就不爬
+     *
      * @param movieName
      * @return
      */
@@ -140,11 +142,75 @@ public class DoubanMovieService implements IDoubanMovie {
 
     /**
      * 获取电影内容没有抓取到的集合
+     *
      * @return
      */
     @Override
     public List<MovieBean> getEmptyContentMovie() {
         return movieMapper.getEmptyMovies();
+    }
+
+    @Override
+    public void deleteByTag(String tag, String table) {
+        if (TextUtils.isEmpty(table) || TextUtils.isEmpty(tag)) {
+            return;
+        }
+        movieMapper.deleteByTag(tag, table);
+    }
+
+    @Override
+    public List<MovieBean> getMovieByTagAndName(String tag, String name, String table) {
+        if (TextUtils.isEmpty(table) || TextUtils.isEmpty(tag) || TextUtils.isEmpty(name)) {
+            return null;
+        }
+
+        return movieMapper.getMovieByTagAndName(tag, name, table);
+    }
+
+    @Override
+    public void insertTagMovie(MovieBean movieBean, String table, int index) {
+        if (movieBean == null || TextUtils.isEmpty(table) || index < 0) {
+            return;
+        }
+        movieMapper.insertTagMovie(movieBean, table, index);
+
+    }
+
+    @Override
+    public void insertBDMovie(MovieBean movieBean, int index) {
+        if (movieBean == null) {
+            return;
+        }
+
+        //插入到电影数据库中
+        List<MovieBean> list = getMoviesByName(movieBean.getName());
+        if (list == null || list.size() == 0) {
+            insert(movieBean);
+        }
+
+        if (TextUtils.isEmpty(movieBean.getTag())) {
+            return;
+        }
+        //放入到百度的tag movie数据库中
+        List<MovieBean> olds  = getMovieByTagAndName(movieBean.getTag(), movieBean.getName(), Constant.Table.BAIDU_TAG_MOVIE_TABLE);
+        if (olds == null || olds.size() == 0) {//对应的tag中还咩有这个电影
+            if (index < 0) {
+                int num = movieMapper.getNumByTag(movieBean.getTag(), Constant.Table.BAIDU_TAG_MOVIE_TABLE);
+                if (num > 0) {
+                    index = num + 1;
+                }
+            }
+            insertTagMovie(movieBean, Constant.Table.BAIDU_TAG_MOVIE_TABLE, index);
+        }else {//更新,主要为了更新类型 时间等信息
+            for (MovieBean old : olds) {
+                old.setValueFromOther(movieBean);
+                movieMapper.updateTagMovie(old, Constant.Table.BAIDU_TAG_MOVIE_TABLE);
+            }
+
+
+        }
+
+
     }
 
 

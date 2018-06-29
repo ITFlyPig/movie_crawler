@@ -2,11 +2,14 @@ package com.wangyuelin.app.crawler.dylol.controller;
 
 import com.wangyuelin.app.crawler.MovieProcessor;
 import com.wangyuelin.app.crawler.baidu.BDMoviePage;
+import com.wangyuelin.app.crawler.base.MovieBean;
+import com.wangyuelin.app.crawler.db.StaticDBHandle;
 import com.wangyuelin.app.crawler.douban.DoubanChooseMoviePage;
 import com.wangyuelin.app.crawler.douban.DoubanMediaChoosePage;
 import com.wangyuelin.app.crawler.douban.DoubanPage;
 import com.wangyuelin.app.crawler.douban.MovieHousePage;
 import com.wangyuelin.app.crawler.douban.mapper.MovieMapper;
+import com.wangyuelin.app.crawler.douban.service.DoubanMovieService;
 import com.wangyuelin.app.crawler.dy2018.DyttProcessor;
 import com.wangyuelin.app.crawler.dy2018.TableUtil;
 import com.wangyuelin.app.crawler.dylol.bean.Movie;
@@ -18,6 +21,7 @@ import com.wangyuelin.app.crawler.idata.IdataUtil;
 import com.wangyuelin.app.crawler.task.TaskUtils;
 import com.wangyuelin.app.proxypool.ProxyPool;
 import com.wangyuelin.app.proxypool.monitor.MonitorFileUtil;
+import com.wangyuelin.app.util.Constant;
 import com.wangyuelin.app.util.JdbcUtil;
 import com.wangyuelin.app.crawler.SpiderCraw;
 import org.slf4j.Logger;
@@ -32,7 +36,8 @@ import java.util.List;
 
 @Controller
 @RequestMapping("user")
-public class UserController {
+public class
+UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
@@ -73,6 +78,9 @@ public class UserController {
 
     @Autowired
     private BDMoviePage bdMoviePage;
+
+    @Autowired
+    private DoubanMovieService doubanMovieService;
 
     @RequestMapping("/getOneUser")
     @ResponseBody
@@ -176,8 +184,15 @@ public class UserController {
 
         //idata搜索电影
 //        IdataUtil.searchMovie("厕所英雄");
-        bdMoviePage.startCrawBaiduMovie();
+        //爬取百度电影
 
+//        MovieBean movieBean = new MovieBean();
+//        movieBean.setName("死侍2");
+//        movieBean.setShowYear("2018");
+//        movieBean.setTag("最热");
+//        doubanMovieService.insertBDMovie(movieBean, -1);
+
+        bdMoviePage.startCrawBaiduMovie();
 
         return "开始爬取";
     }

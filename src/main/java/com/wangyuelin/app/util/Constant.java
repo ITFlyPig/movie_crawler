@@ -74,4 +74,9 @@ public interface Constant {
          String ZHIMA = "zhimacangku";
     }
 
+    interface Table {
+         String BAIDU_TAG_MOVIE_TABLE = "baidu_movie_tag";
+
+    }
+
 }

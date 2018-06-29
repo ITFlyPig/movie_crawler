@@ -1,2 +1,2 @@
 电影爬取
-https://www.loldytt.com/  爬取LOL电影天堂的资源
+百度、zuida、豆瓣等网站的电影
