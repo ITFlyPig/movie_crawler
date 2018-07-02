@@ -71,7 +71,7 @@ public class BDMoviePage {
                                     task.setMovieTag(tag.getTagStr());
                                 }
 
-//                        MyThreadPool.submit(task);
+//                                MyThreadPool.submit(task);
                                 task.run();
                             }
 

@@ -6,6 +6,7 @@ import com.wangyuelin.app.crawler.db.StaticDBHandle;
 import com.wangyuelin.app.crawler.downloader.OkhttpUtil;
 import com.wangyuelin.app.crawler.idata.IdataUtil;
 import com.wangyuelin.app.util.Constant;
+import com.wangyuelin.app.util.LogUtils;
 import com.wangyuelin.app.util.MyThreadPool;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -64,13 +65,8 @@ public class BDMovieTask implements Runnable {
 
     @Override
     public void run() {
-        if (!shouldHandle()) {
-            logger.info("连续失败10次，不处理这个key：" + seacherKey);
-            return;
-        }
-
-
         logger.info("开始处理：" + mUrl);
+        LogUtils.logToFIle("开始处理key对应的ur" +  seacherKey + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
         String httpUrl = null;
         if (pageIndex == 0) {
             httpUrl = getQueryUrl(pageIndex);
@@ -181,8 +177,15 @@ public class BDMovieTask implements Runnable {
         for (int i = 1; i < totalPage; i++) {
 
 
+
         //测试
-//        for (int i = 40000; i < 40030; i++) {
+//        for (int i = 40000; i < 50000; i++) {
+
+            if (!shouldHandle()) {
+                logger.info(seacherKey + "连续事变十次，不处理这种key对应的url" );
+                LogUtils.logToFIle(seacherKey + "连续事变十次，不处理这种key对应的url" + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
+                return;
+            }
 
             String url = getQueryUrl(i);
 
@@ -194,8 +197,8 @@ public class BDMovieTask implements Runnable {
                 movieTask.setYear(year);
                 movieTask.setType(type);
                 logger.info("key:" + seacherKey + "添加到待抓取队列：" + url);
-//                MyThreadPool.submit(movieTask);
-                movieTask.run();
+                MyThreadPool.submit(movieTask);
+//                movieTask.run();
             }
         }
 

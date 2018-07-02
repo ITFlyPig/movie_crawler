@@ -68,6 +68,7 @@ public interface Constant {
         String IP_URL_FILE = "get_ip_url.txt";//存放获取ip的url
         String GET_IP_LOG = "get_ip_log.txt";//保存从url获取ip的相关log
         String DOWNLOAD_PAGE_LOG = "download_page_log.txt";//下载页面的log
+        String BAIDU_CRAW_LOG = "baidu_craw_log";//爬取百度电影的log
     }
 
     interface Host{

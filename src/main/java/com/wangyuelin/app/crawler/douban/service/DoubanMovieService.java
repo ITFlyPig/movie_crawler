@@ -7,6 +7,7 @@ import com.wangyuelin.app.crawler.douban.mapper.MovieMapper;
 import com.wangyuelin.app.crawler.douban.mapper.PlayUrlMapper;
 import com.wangyuelin.app.crawler.douban.service.itf.IDoubanMovie;
 import com.wangyuelin.app.util.Constant;
+import com.wangyuelin.app.util.LogUtils;
 import org.apache.http.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wangyuelin.app.util.Constant.FileNames.BAIDU_CRAW_LOG;
 
 /**
  * 描述:
@@ -194,15 +197,21 @@ public class DoubanMovieService implements IDoubanMovie {
         //放入到百度的tag movie数据库中
         List<MovieBean> olds  = getMovieByTagAndName(movieBean.getTag(), movieBean.getName(), Constant.Table.BAIDU_TAG_MOVIE_TABLE);
         if (olds == null || olds.size() == 0) {//对应的tag中还咩有这个电影
-            if (index < 0) {
-                int num = movieMapper.getNumByTag(movieBean.getTag(), Constant.Table.BAIDU_TAG_MOVIE_TABLE);
-                if (num > 0) {
-                    index = num + 1;
-                }
-            }
+//            if (index < 0) {
+//                int num = movieMapper.getNumByTag(movieBean.getTag(), Constant.Table.BAIDU_TAG_MOVIE_TABLE);
+//                if (num > 0) {
+//                    index = num + 1;
+//                }
+//            }
+            String log = "插入新的电影：" + movieBean.getName() + "\n";
+            LogUtils.logToFIle(log ,  BAIDU_CRAW_LOG);
             insertTagMovie(movieBean, Constant.Table.BAIDU_TAG_MOVIE_TABLE, index);
         }else {//更新,主要为了更新类型 时间等信息
             for (MovieBean old : olds) {
+                String log = "更新电影：" + movieBean.getName() + "\n";
+
+                logger.info(log);
+                LogUtils.logToFIle(log ,  BAIDU_CRAW_LOG);
                 old.setValueFromOther(movieBean);
                 movieMapper.updateTagMovie(old, Constant.Table.BAIDU_TAG_MOVIE_TABLE);
             }
