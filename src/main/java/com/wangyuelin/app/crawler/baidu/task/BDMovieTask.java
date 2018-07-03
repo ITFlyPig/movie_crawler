@@ -65,8 +65,7 @@ public class BDMovieTask implements Runnable {
 
     @Override
     public void run() {
-        logger.info("开始处理：" + mUrl);
-        LogUtils.logToFIle("开始处理key对应的ur" +  seacherKey + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
+        LogUtils.logToFIle("key" +  seacherKey + "url:" + mUrl + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
         String httpUrl = null;
         if (pageIndex == 0) {
             httpUrl = getQueryUrl(pageIndex);
@@ -74,10 +73,6 @@ public class BDMovieTask implements Runnable {
         } else {
             httpUrl = mUrl;
         }
-
-
-        logger.info("task中的url：" + httpUrl);
-
 
         if (TextUtils.isEmpty(httpUrl)) {
             return;
@@ -124,7 +119,6 @@ public class BDMovieTask implements Runnable {
             IdataUtil.putData(seacherKey, size);
             for (int i = 0; i < size; i++) {
                 String name = names.get(i);
-                logger.info("解析得到的百度电影 ：" + name);
                 MovieBean movieBean = new MovieBean();
                 movieBean.setName(name);
                 movieBean.setShowYear(year);
@@ -146,7 +140,6 @@ public class BDMovieTask implements Runnable {
 
             try {
                 String totalNum = JsonPath.read(json, "$.data[0].dispNum");
-                logger.info("得到电影的数量：" + totalNum);
                 int total = Integer.valueOf(totalNum);
                 addAll(total);
             } catch (Exception e) {
@@ -196,7 +189,7 @@ public class BDMovieTask implements Runnable {
                 movieTask.setLocation(location);
                 movieTask.setYear(year);
                 movieTask.setType(type);
-                logger.info("key:" + seacherKey + "添加到待抓取队列：" + url);
+                LogUtils.logToFIle("key:" + seacherKey + "添加到待抓取队列：" + url + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
                 MyThreadPool.submit(movieTask);
 //                movieTask.run();
             }

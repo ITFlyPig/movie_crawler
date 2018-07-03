@@ -172,7 +172,7 @@ public class DoubanMovieService implements IDoubanMovie {
 
     @Override
     public void insertTagMovie(MovieBean movieBean, String table, int index) {
-        if (movieBean == null || TextUtils.isEmpty(table) || index < 0) {
+        if (movieBean == null || TextUtils.isEmpty(table)) {
             return;
         }
         movieMapper.insertTagMovie(movieBean, table, index);

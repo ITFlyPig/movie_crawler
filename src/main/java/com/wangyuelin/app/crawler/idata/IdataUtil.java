@@ -1,5 +1,7 @@
 package com.wangyuelin.app.crawler.idata;
 
+import com.wangyuelin.app.util.Constant;
+import com.wangyuelin.app.util.LogUtils;
 import com.wangyuelin.app.util.MyThreadPool;
 import org.apache.http.util.TextUtils;
 import org.slf4j.Logger;
@@ -62,7 +64,7 @@ public class IdataUtil {
         count.put(key, preCount);
 
         for (Map.Entry<String, Integer>  entry: count.entrySet()) {
-            logger.info(entry.getKey() + " 对应的电影数量：" + entry.getValue());
+            LogUtils.logToFIle(entry.getKey() + " 对应的电影数量：" + entry.getValue() + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
         }
     }
 
