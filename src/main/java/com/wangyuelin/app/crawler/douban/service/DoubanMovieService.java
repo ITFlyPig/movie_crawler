@@ -28,6 +28,7 @@ import static com.wangyuelin.app.util.Constant.FileNames.BAIDU_CRAW_LOG;
 public class DoubanMovieService implements IDoubanMovie {
     private static final Logger logger = LoggerFactory.getLogger(DoubanMovieService.class);
 
+
     @Autowired
     private MovieMapper movieMapper;
     @Autowired

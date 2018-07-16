@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 描述:
@@ -29,8 +30,7 @@ public class BDMovieTask implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(BDMovieTask.class);
     private String mUrl;//请求的url
     private static final int LATEST_MOVIE_PER_PAGE_NUM = 8;//最新电影，一页显示多少数据
-    private static Map<String, Integer> FAIL_KEY_COUNT = new HashMap<>();//统计一种key下载失败的次数，连续10次下载失败，就不再下载这种key对应的url
-    private static Map<String, Integer> PRE_FIAL_PAGE = new HashMap<>();//记录前一个下载失败的页面
+    private static ConcurrentHashMap<String, Integer> FAIL_KEY_COUNT = new ConcurrentHashMap<>();//统计一种key下载失败的次数，连续10次下载失败，就不再下载这种key对应的url
     private int pageIndex = 0;
     private String seacherKey;//爬取的关键词
     private String movieTag;//电影的tag
@@ -58,6 +58,10 @@ public class BDMovieTask implements Runnable {
         this.seacherKey = seacherKey;
     }
 
+    public String getSeacherKey() {
+        return seacherKey;
+    }
+
     public BDMovieTask(String url, int pageIndex) {
         this.mUrl = url;
         this.pageIndex = pageIndex;
@@ -65,7 +69,19 @@ public class BDMovieTask implements Runnable {
 
     @Override
     public void run() {
-        LogUtils.logToFIle("key" +  seacherKey + "url:" + mUrl + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
+        //检查此种类型的key对应的url是否需要爬取
+        if (!shouldHandle()) {
+            LogUtils.logToFIle(seacherKey + "连续事变十次，不处理这种key对应的url：" + mUrl + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
+
+            //从线程池中工作队列中删除对应的任务
+
+            MyThreadPool.putNoCrawKey(seacherKey);
+
+            return;
+        }
+
+
+        LogUtils.logToFIle("key" + seacherKey + "url:" + mUrl + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
         String httpUrl = null;
         if (pageIndex == 0) {
             httpUrl = getQueryUrl(pageIndex);
@@ -104,7 +120,7 @@ public class BDMovieTask implements Runnable {
         try {
             names = JsonPath.read(json, "$.data[0].result[*].name");
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
 
             failCount(seacherKey);
 
@@ -131,7 +147,7 @@ public class BDMovieTask implements Runnable {
                     movieIndex = pageIndex * 8 + i + 1;
                 }
 
-                StaticDBHandle.doubanMovieService.insertBDMovie(movieBean, movieIndex);
+                MyThreadPool.addMovie(movieBean);
             }
         }
 
@@ -170,15 +186,9 @@ public class BDMovieTask implements Runnable {
         for (int i = 1; i < totalPage; i++) {
 
 
-
         //测试
-//        for (int i = 40000; i < 50000; i++) {
+//        for (int i = 40000; i < 40050; i++) {
 
-            if (!shouldHandle()) {
-                logger.info(seacherKey + "连续事变十次，不处理这种key对应的url" );
-                LogUtils.logToFIle(seacherKey + "连续事变十次，不处理这种key对应的url" + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
-                return;
-            }
 
             String url = getQueryUrl(i);
 
@@ -190,7 +200,8 @@ public class BDMovieTask implements Runnable {
                 movieTask.setYear(year);
                 movieTask.setType(type);
                 LogUtils.logToFIle("key:" + seacherKey + "添加到待抓取队列：" + url + "\n", Constant.FileNames.BAIDU_CRAW_LOG);
-                MyThreadPool.submit(movieTask);
+                logger.info(seacherKey + " -----------将url添加到工作队列中：" + url);
+                MyThreadPool.submitSequenceTask(movieTask);
 //                movieTask.run();
             }
         }
@@ -262,7 +273,7 @@ public class BDMovieTask implements Runnable {
         if (failCount == null) {
             failCount = 0;
         }
-        if (failCount > 10) {
+        if (failCount > 20) {
             return false;
         }
         return true;
@@ -272,25 +283,15 @@ public class BDMovieTask implements Runnable {
      * key对应的失败次数的统计
      */
     private void failCount(String key) {
-        Integer preFailPage = PRE_FIAL_PAGE.get(key);
-        if (preFailPage == null) {
-            preFailPage = -4;
-        }
 
         Integer count = FAIL_KEY_COUNT.get(seacherKey);
         if (count == null) {
             count = 0;
         }
 
-        if (preFailPage + 1 == pageIndex) {
-            count++;
-        } else {
-            count = 0;
-        }
+        count++;
+        logger.info("任务执行失败：失败的key---------" + seacherKey + " 当前的页码---------：" + pageIndex + " 失败的次数-------" + count);
         FAIL_KEY_COUNT.put(seacherKey, count);
-        PRE_FIAL_PAGE.put(seacherKey, pageIndex);
-
-
 
 
     }

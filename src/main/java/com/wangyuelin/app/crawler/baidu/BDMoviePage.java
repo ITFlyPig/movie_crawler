@@ -41,7 +41,7 @@ public class BDMoviePage {
             public void run() {
                 //测试
 //                MovieType[] movieTypes = new MovieType[]{ MovieType.ACTION};
-
+//
                 ArrayList<String> types = new ArrayList<>();
                 types.add("");//对于百度电影分类来说""表示全部
                 for (MovieType movieType : movieTypes) {
@@ -81,7 +81,7 @@ public class BDMoviePage {
 
             }
         };
-        MyThreadPool.submit(crawBaiduMovieTask);
+        MyThreadPool.submitSequenceTask(crawBaiduMovieTask);
 
 
     }

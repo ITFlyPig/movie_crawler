@@ -1,5 +1,7 @@
 package com.wangyuelin.app.crawler.movie;
 
+import java.util.Collections;
+
 /**
  * 描述:电影相关的常量
  *
@@ -9,12 +11,12 @@ package com.wangyuelin.app.crawler.movie;
 public class MovieConstantInfo {
     public static String[] LOCATION = new String[]{"", "美国", "大陆", "香港", "台湾", "韩国", "日本", "泰国", "英国", "法国", "其他"};//""表示全部
     public static String[] BD_YEAR = new String[]{"", "2018", "2017", "2016", "2010-2015", "00年代", "90年代", "更早"};//百度电影的时间分类方式   ""表示全部
-    public static int[] BD_SORT = new int[]{16, 17, 18};//分别是最热电影、最新电影、用户好评
+//    public static int[] BD_SORT = new int[]{16, 17, 18};//分别是最热电影、最新电影、用户好评
     public static String BD_URL = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?resource_id=28286&from_mid=1&&format=json&ie=utf-8&oe=utf-8&query=%E7%94%B5%E5%BD%B1&sort_key=%d&sort_type=1&stat0=%s&stat1=%s&stat2=%s&stat3=%s";
 
-//    public static String[] LOCATION = new String[]{"" , "美国" };//""表示全部
-//    public static String[] BD_YEAR = new String[]{"", "2018"};//百度电影的时间分类方式   ""表示全部
-//    public static int[] BD_SORT = new int[]{16, 17, 18};//分别是最热电影、最新电影、用户好评
+//    public static String[] LOCATION = new String[]{""  };//""表示全部
+//    public static String[] BD_YEAR = new String[]{""};//百度电影的时间分类方式   ""表示全部
+    public static int[] BD_SORT = new int[]{17};//分别是最热电影、最新电影、用户好评
 
     /**
      * 获得百度的电影的tag
